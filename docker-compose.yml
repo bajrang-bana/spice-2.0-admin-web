@@ -1,0 +1,20 @@
+services:
+  spice-admin-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_BASE_URL: ${REACT_APP_BASE_URL:-https://spice-dev-backend.uhis.labsplatform.com/}
+        REACT_APP_CFR_WEB_URL: ${REACT_APP_CFR_WEB_URL:-https://reporting-dev.labsplatform.com/}
+        REACT_APP_INSIGHT_WEB_URL: ${REACT_APP_INSIGHT_WEB_URL:-https://superset-dev.labsplatform.com/}
+        REACT_APP_COACHING_WEB_URL: ${REACT_APP_COACHING_WEB_URL:-http://localhost:3000/medtronics-ui/module-library}
+        REACT_APP_PASSWORD_HASH_KEY: ${REACT_APP_PASSWORD_HASH_KEY:-spice_uat}
+        REACT_APP_CRYPTR_SECRET_KEY: ${REACT_APP_CRYPTR_SECRET_KEY:-spice_uat}
+        REACT_APP_GA_TRACKING_ID: ${REACT_APP_GA_TRACKING_ID:-G-E4RXW635CB}
+        REACT_APP_ORG_SUCCESS_DELAY_TIME: ${REACT_APP_ORG_SUCCESS_DELAY_TIME:-21000}
+        REACT_APP_ENCRYPTION_ALGM: ${REACT_APP_ENCRYPTION_ALGM:-aes-256-gcm}
+        REACT_APP_ENCRYPTION_SALT: ${REACT_APP_ENCRYPTION_SALT:-hk8pvl@UyQBZJGLtSN478Z/Q}
+    container_name: spice_admin_web
+    ports:
+      - "${PORT:-3000}:80"
+    restart: always

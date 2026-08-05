@@ -109,7 +109,7 @@ describe('LandingPage', () => {
     // expect(reportLink.closest('a')).toHaveAttribute('href', process.env.REACT_APP_CFR_WEB_URL);
     expect(reportLink.closest('a')).toHaveAttribute('target', '_blank');
   });
-  it('should render the LandingPage component correctly with CFR suite access only', async () => {
+  it('should render LandingPage correctly with CFR suite access and Coaching', async () => {
     const localStore = mockStore({
       user: {
         user: {
@@ -128,11 +128,11 @@ describe('LandingPage', () => {
         </MemoryRouter>
       </Provider>
     );
-    expect(goToUrl).toHaveBeenCalledWith(process.env.REACT_APP_CFR_WEB_URL);
+    expect(await screen.findByText('Reports')).toBeInTheDocument();
+    expect(await screen.findByText('Micro Coaching')).toBeInTheDocument();
   });
 
-  it('should render the LandingPage component correctly with Admin suite access', async () => {
-    const adminUrl = HOME_PAGE_BY_ROLE[APPCONSTANTS.ROLES.SUPER_ADMIN];
+  it('should render LandingPage correctly with Admin suite access and Coaching', async () => {
     const history = createMemoryHistory();
     const localStore = mockStore({
       user: {
@@ -152,7 +152,8 @@ describe('LandingPage', () => {
         </Router>
       </Provider>
     );
-    expect(history.location.pathname).toBe(adminUrl);
+    expect(await screen.findByText('Admin')).toBeInTheDocument();
+    expect(await screen.findByText('Micro Coaching')).toBeInTheDocument();
   });
 
   it('should render the LandingPage component correctly with community app type', async () => {

@@ -1,0 +1,12 @@
+node_modules
+build
+dist
+.git
+.gitignore
+.gitlab-ci.yml
+bitbucket-pipelines.yml
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.md

@@ -27,12 +27,22 @@ const parseUrl = (value?: string): URL | undefined => {
   return new URL(value);
 };
 
+const isLocalBackend = (baseUrl?: string): boolean => {
+  const parsed = parseUrl(baseUrl);
+
+  if (!parsed) {
+    return false;
+  }
+
+  return isLocalHostname(parsed.hostname);
+};
+
 const shouldUseProxyBaseUrl = (baseUrl?: string): boolean => {
   if (globalThis.window === undefined || !isLocalHostname(globalThis.window.location.hostname)) {
     return false;
   }
 
-  return Boolean(parseUrl(baseUrl));
+  return isLocalBackend(baseUrl);
 };
 
 export const appEnv = {
@@ -47,7 +57,13 @@ export const appEnv = {
     return readEnv('REACT_APP_BASE_URL');
   },
   get apiBaseUrl(): string | undefined {
-    return this.nodeEnv === 'development' || shouldUseProxyBaseUrl(this.baseUrl) ? '/' : this.baseUrl;
+    // Proxy only for local backends. Remote URLs must be called directly so
+    // session cookies are set/sent for that domain (avoids local profile 401).
+    if (isLocalBackend(this.baseUrl) || shouldUseProxyBaseUrl(this.baseUrl)) {
+      return '/';
+    }
+
+    return this.baseUrl;
   },
   get cfrWebUrl(): string | undefined {
     return readEnv('REACT_APP_CFR_WEB_URL');

@@ -78,8 +78,22 @@ const buildLocalComposeProxies = (target: string): Record<string, ProxyOptions> 
   }, {});
 };
 
-const buildServiceProxies = (target?: string) => {
+const isLocalBackendTarget = (target?: string): boolean => {
   if (!target) {
+    return true;
+  }
+
+  try {
+    const { hostname } = new URL(target);
+    return hostname === 'localhost' || hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
+};
+
+const buildServiceProxies = (target?: string) => {
+  if (!target || !isLocalBackendTarget(target)) {
+    // Remote backends are called directly by the browser; no local proxy.
     return undefined;
   }
 
@@ -188,7 +202,9 @@ export default defineConfig(({ mode }) => {
   const host = process.env.HOST || '0.0.0.0';
   const port = Number(process.env.PORT || 3000);
   const buildPath = process.env.BUILD_PATH || 'build';
-  const serviceProxy = buildServiceProxies(clientEnv.REACT_APP_BASE_URL);
+  const serviceProxy = isLocalBackendTarget(clientEnv.REACT_APP_BASE_URL)
+    ? buildServiceProxies(clientEnv.REACT_APP_BASE_URL)
+    : undefined;
 
   return {
     plugins: [

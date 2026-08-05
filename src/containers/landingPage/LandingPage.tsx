@@ -93,10 +93,12 @@ const LandingPage = (): React.ReactElement => {
    * Filters and sets authorized suites, redirects if only one suite is available
    */
   useEffect(() => {
-    const authorisedSuites: ISpiceSuite[] = spiceSuites.filter((suite) =>
-      userSuiteAccess?.some(
-        (access: string | string[]) => suite.suiteAccessName && access.includes(suite.suiteAccessName)
-      )
+    const authorisedSuites: ISpiceSuite[] = spiceSuites.filter(
+      (suite) =>
+        suite.suiteAccessName === COACHING ||
+        userSuiteAccess?.some(
+          (access: string | string[]) => suite.suiteAccessName && access.includes(suite.suiteAccessName)
+        )
     );
     if (authorisedSuites.length === 1) {
       const { hasDomain, domainUrl } = authorisedSuites[0];
