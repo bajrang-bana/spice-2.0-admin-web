@@ -11,7 +11,7 @@ RUN npm ci
 COPY . .
 
 # Build environment variables (can be overridden during docker build)
-ARG REACT_APP_ROUTE_PREFIX
+ARG REACT_APP_ROUTE_PREFIX=/medtronics-ai-coaching
 ARG REACT_APP_BASE_URL
 ARG REACT_APP_CFR_WEB_URL
 ARG REACT_APP_INSIGHT_WEB_URL
