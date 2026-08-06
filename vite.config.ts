@@ -92,8 +92,7 @@ const isLocalBackendTarget = (target?: string): boolean => {
 };
 
 const buildServiceProxies = (target?: string) => {
-  if (!target || !isLocalBackendTarget(target)) {
-    // Remote backends are called directly by the browser; no local proxy.
+  if (!target) {
     return undefined;
   }
 
@@ -107,6 +106,16 @@ const buildServiceProxies = (target?: string) => {
     target: normalizeProxyTarget(target),
     changeOrigin: true,
     secure: false,
+    configure: (proxy) => {
+      proxy.on('proxyRes', (proxyRes) => {
+        const setCookieHeaders = proxyRes.headers['set-cookie'];
+        if (setCookieHeaders) {
+          proxyRes.headers['set-cookie'] = setCookieHeaders.map((cookie) =>
+            cookie.replace(/Domain=[^;]+;?/i, '')
+          );
+        }
+      });
+    },
   };
 
   return {
@@ -202,9 +211,7 @@ export default defineConfig(({ mode }) => {
   const host = process.env.HOST || '0.0.0.0';
   const port = Number(process.env.PORT || 3000);
   const buildPath = process.env.BUILD_PATH || 'build';
-  const serviceProxy = isLocalBackendTarget(clientEnv.REACT_APP_BASE_URL)
-    ? buildServiceProxies(clientEnv.REACT_APP_BASE_URL)
-    : undefined;
+  const serviceProxy = buildServiceProxies(clientEnv.REACT_APP_BASE_URL || process.env.REACT_APP_BASE_URL);
   const rawRoutePrefix = clientEnv.REACT_APP_ROUTE_PREFIX || process.env.REACT_APP_ROUTE_PREFIX || '';
   const routePrefix = rawRoutePrefix && rawRoutePrefix !== '/'
     ? (rawRoutePrefix.startsWith('/') ? rawRoutePrefix : `/${rawRoutePrefix}`).replace(/\/+$/, '')
