@@ -205,8 +205,14 @@ export default defineConfig(({ mode }) => {
   const serviceProxy = isLocalBackendTarget(clientEnv.REACT_APP_BASE_URL)
     ? buildServiceProxies(clientEnv.REACT_APP_BASE_URL)
     : undefined;
+  const rawRoutePrefix = clientEnv.REACT_APP_ROUTE_PREFIX || process.env.REACT_APP_ROUTE_PREFIX || '';
+  const routePrefix = rawRoutePrefix && rawRoutePrefix !== '/'
+    ? (rawRoutePrefix.startsWith('/') ? rawRoutePrefix : `/${rawRoutePrefix}`).replace(/\/+$/, '')
+    : '';
+  const base = routePrefix ? `${routePrefix}/` : '/';
 
   return {
+    base,
     plugins: [
       react(),
       svgr({

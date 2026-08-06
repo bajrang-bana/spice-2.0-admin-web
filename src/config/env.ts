@@ -53,6 +53,14 @@ export const appEnv = {
   get publicUrl(): string {
     return readEnv('PUBLIC_URL') || '';
   },
+  get routePrefix(): string {
+    const rawPrefix = readEnv('REACT_APP_ROUTE_PREFIX') || readEnv('PUBLIC_URL') || '';
+    if (!rawPrefix || rawPrefix === '/') {
+      return '';
+    }
+    const formatted = rawPrefix.startsWith('/') ? rawPrefix : `/${rawPrefix}`;
+    return formatted.endsWith('/') ? formatted.slice(0, -1) : formatted;
+  },
   get baseUrl(): string | undefined {
     return readEnv('REACT_APP_BASE_URL');
   },

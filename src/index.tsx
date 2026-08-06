@@ -12,6 +12,7 @@ import ErrorBoundary from './components/errorBoundary/ErrorBoundary';
 import APPCONSTANTS from './constants/appConstants';
 import sessionStorageServices from './global/sessionStorageServices';
 import { fetchCountryDetailReq } from './store/region/actions';
+import { appEnv } from './config/env';
 
 setupInterceptors(store);
 
@@ -25,7 +26,7 @@ const root = createRoot(container!);
 root.render(
   <React.Fragment>
     <Provider store={store}>
-      <BrowserRouter>
+      <BrowserRouter basename={appEnv.routePrefix || undefined}>
         <ErrorBoundary>
           <App />
         </ErrorBoundary>
